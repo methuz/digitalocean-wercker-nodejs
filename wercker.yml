@@ -1,4 +1,4 @@
-box: wercker/nodejs
+box: node
 # Build definition
 build:
   # The steps that will be executed on build
@@ -22,19 +22,19 @@ deploy:
     - create-file:
         name: write key
         filename: $PRIVATEKEY_PATH
-        content: $DEPLOY_KEY_PRIVATE
+        content: $WERCKER_PRIVATE
         overwrite: true
     - script:
         name: transfer application
         code: |
           pwd
           ls -la
-          scp -i $PRIVATEKEY_PATH app.js package.json root@$IPADDRESS:/var/local/www
+          scp -i $PRIVATEKEY_PATH app.js package.json root@$IP_ADDRESS:/var/local/www
     - script:
         name: npm install
-        code: ssh -i $PRIVATEKEY_PATH -l root $IPADDRESS "cd /var/local/www/ &&  npm install --production"
+        code: ssh -i $PRIVATEKEY_PATH -l root $IP_ADDRESS "cd /var/local/www/ &&  npm install --production"
     - script:
         name: start application
         code: |
-          ssh -i $PRIVATEKEY_PATH -l root $IPADDRESS "if [[ \"\$(status node-app)\" = *start/running* ]]; then stop node-app -n ; fi"
-          ssh -i $PRIVATEKEY_PATH -l root $IPADDRESS start node-app
+          ssh -i $PRIVATEKEY_PATH -l root $IP_ADDRESS "if [[ \"\$(status node-app)\" = *start/running* ]]; then stop node-app -n ; fi"
+          ssh -i $PRIVATEKEY_PATH -l root $IP_ADDRESS start node-app
